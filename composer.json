@@ -1,6 +1,6 @@
 {
     "name": "laravolt/votee",
-    "description": "Upvote downvote for any object in Laravel",
+    "description": "Upvote downvote for any Eloquent object in Laravel",
     "keywords": [
         "laravel",
         "votee",
