@@ -27,6 +27,9 @@ class VoteeController extends Controller
             ];
 
         } catch (\Exception $e) {
+            if($request->wantsJson()) {
+                return response()->json(['status' => $e->getCode(), 'error' => $e->getMessage(), 'message' => $e->getMessage()], $e->getCode());
+            }
             throw $e;
         }
 
@@ -48,6 +51,10 @@ class VoteeController extends Controller
             ];
 
         } catch (\Exception $e) {
+            if($request->wantsJson()) {
+                return response()->json(['status' => $e->getCode(), 'error' => $e->getMessage(), 'message' => $e->getMessage()], $e->getCode());
+            }
+
             throw $e;
         }
 
