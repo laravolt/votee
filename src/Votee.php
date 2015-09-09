@@ -160,7 +160,7 @@ class Votee
 
         $saved = $content->voteCounter()->save($counter);
         if ($saved && $event) {
-            event('votee.' . $event, [$content, $this->app->auth->user()]);
+            event('votee.' . $event, [$this->app->auth->user(), $content]);
         }
 
         return $saved;
@@ -212,10 +212,6 @@ class Votee
     {
         if (!$content instanceof Model) {
             $class = config('votee.content_model');
-
-            if(!$class) {
-                throw new \InvalidArgumentException('Parameter only accept valid Voteable object if config votee.content_model not set');
-            }
 
             return with(new $class)->findOrFail($content);
         }

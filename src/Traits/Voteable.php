@@ -25,6 +25,18 @@ trait Voteable
         return $this->morphOne(VoteCounter::class, 'voteable');
     }
 
+    public function scopeMostVoted($query)
+    {
+        // not working
+        //return $query->with(['voteCounter' => function($q){
+        //    return $q->orderBy('up', 'DESC');
+        //}]);
+
+        $query->leftJoin('voteable_counter', 'voteable_counter.voteable_id', '=', 'content.id')
+        ->where('voteable_type', '=', (new static)->getMorphClass())
+        ->orderBy('up', 'DESC');
+    }
+
     public function getVoteUpAttribute()
     {
         return $this->voteCounter ? $this->voteCounter->up : 0;

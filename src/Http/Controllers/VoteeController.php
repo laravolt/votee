@@ -2,19 +2,13 @@
 
 namespace Laravolt\Votee\Http\Controllers;
 
+use Laravolt\Votee\Exceptions\UnauthenticatedException;
 use Votee;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 
 class VoteeController extends Controller
 {
-
-    /**
-     * ContentController constructor.
-     */
-    public function __construct()
-    {
-    }
 
     public function up(Request $request)
     {
@@ -26,18 +20,15 @@ class VoteeController extends Controller
                 'vote_down' => $vote['vote_down'],
             ];
 
-        } catch (\Exception $e) {
-            if($request->wantsJson()) {
-                return response()->json(['status' => $e->getCode(), 'error' => $e->getMessage(), 'message' => $e->getMessage()], $e->getCode());
-            }
-            throw $e;
+        }
+        catch(UnauthenticatedException $e) {
+            return response()->json(['status' => $e->getCode(), 'error' => $e->getMessage(), 'message' => trans('votee::votee.unauthenticated')], $e->getCode());
+        }
+        catch (\Exception $e) {
+            return response()->json(['status' => $e->getCode(), 'error' => $e->getMessage(), 'message' => $e->getMessage()], $e->getCode());
         }
 
-        if ($request->ajax()) {
-            return response()->json($data);
-        }
-
-        return redirect()->back();
+        return response()->json($data);
     }
 
     public function down(Request $request)
@@ -50,19 +41,16 @@ class VoteeController extends Controller
                 'vote_down' => $vote['vote_down'],
             ];
 
-        } catch (\Exception $e) {
-            if($request->wantsJson()) {
-                return response()->json(['status' => $e->getCode(), 'error' => $e->getMessage(), 'message' => $e->getMessage()], $e->getCode());
-            }
-
-            throw $e;
+        }
+        catch(UnauthenticatedException $e) {
+            return response()->json(['status' => $e->getCode(), 'error' => $e->getMessage(), 'message' => trans('votee::votee.unauthenticated')], $e->getCode());
+        }
+        catch (\Exception $e) {
+            return response()->json(['status' => $e->getCode(), 'error' => $e->getMessage(), 'message' => $e->getMessage()], $e->getCode());
         }
 
-        if ($request->ajax()) {
-            return response()->json($data);
-        }
 
-        return redirect()->back();
+        return response()->json($data);
     }
 
 }
