@@ -1,18 +1,18 @@
 <div class="ui buttons buttons-votee">
-    <a id="button-like"
+    <button id="button-like"
        data-url="{{ route('votee.up') }}"
        data-id="{{ $content['id'] }}"
        class="ui button button-vote button-vote-up {{ ($vote && $vote['is_up']) ? 'green' : '' }}">
         <i class="icon thumbs outline up"></i>
         <span class="total-up"> {{ $content['vote_up'] }}</span>
-    </a>
-    <a id="button-dislike"
+    </button>
+    <button id="button-dislike"
        data-url="{{ route('votee.down') }}"
        data-id="{{ $content['id'] }}"
        class="ui button button-vote button-vote-down {{ ($vote && $vote['is_down']) ? 'red' : '' }}">
         <i class="icon thumbs outline down"></i>
         <span class="total-down"> {{ $content['vote_down'] }}</span>
-    </a>
+    </button>
 </div>
 
 
@@ -20,9 +20,10 @@
     @parent
     <script type="text/javascript">
         $(document).ready(function () {
-            $('.buttons-votee a').on('click', function () {
+            $('.buttons-votee').on('click', '.button', function () {
                 var btn = $(this);
                 btn.addClass('loading');
+                btn.siblings().andSelf().addClass('disabled').attr('disabled', true);
 
                 $.ajax({
                     url: btn.data('url'),
@@ -54,6 +55,7 @@
                             btn.popup({content: xhr.responseJSON.message}).popup('show');
                         })
                         .always(function () {
+                            btn.siblings().andSelf().removeClass('disabled').removeAttr('disabled');
                             btn.removeClass('loading');
                         });
             });

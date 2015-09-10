@@ -16,6 +16,16 @@ trait Voteable
         return $this->morphMany(Vote::class, 'voteable');
     }
 
+    public function upVotes()
+    {
+        return $this->votes()->whereValue(config('votee.values.up'));
+    }
+
+    public function downVotes()
+    {
+        return $this->votes()->whereValue(config('votee.values.down'));
+    }
+
     /**
      * Counter is a record that stores the total vote up/down for the
      * morphed record

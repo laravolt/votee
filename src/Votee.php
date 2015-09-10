@@ -104,7 +104,7 @@ class Votee
             $vote->save();
         }
 
-        $counter = $this->updateCounter($content, $direction);
+        $counter = $this->reloadCounter($content, $direction);
 
         return [
             'value'     => $vote['value'],
@@ -118,45 +118,37 @@ class Votee
         return $content->votes()->where('user_id', '=', $userId)->first();
     }
 
-    protected function updateCounter($content, $direction)
+    protected function reloadCounter($content, $direction)
     {
         $counter = $content->voteCounter()->first();
 
-        if (!$counter) {
-            $counter = new VoteCounter();
-            $counter->up = $counter->down = 0;
-        }
-
         $event = false;
-
         switch ($direction) {
             case self::NEUTRAL_TO_UP:
-                $counter->up++;
                 $event = 'like';
                 break;
             case self::UP_TO_NEUTRAL:
-                $counter->up--;
                 $event = 'unlike';
                 break;
             case self::DOWN_TO_UP:
-                $counter->down--;
-                $counter->up++;
                 $event = 'like';
                 break;
             case self::NEUTRAL_TO_DOWN:
-                $counter->down++;
                 $event = 'dislike';
                 break;
             case self::DOWN_TO_NEUTRAL:
-                $counter->down--;
                 $event = 'undislike';
                 break;
             case self::UP_TO_DOWN:
-                $counter->up--;
-                $counter->down++;
                 $event = 'dislike';
                 break;
         }
+
+        if (!$counter) {
+            $counter = new VoteCounter();
+        }
+        $counter->up = $content->upVotes()->count();
+        $counter->down = $content->downVotes()->count();
 
         $saved = $content->voteCounter()->save($counter);
         if ($saved && $event) {
