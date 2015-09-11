@@ -1,17 +1,21 @@
 {
     "name": "laravolt/votee",
-    "description": ":package_description",
+    "description": "Upvote downvote for any eloquent object",
     "keywords": [
         "laravolt",
-        "votee"
+        "votee",
+        "upvote",
+        "downvote",
+        "like",
+        "dislike"
     ],
     "homepage": "https://github.com/laravolt/votee",
     "license": "MIT",
     "authors": [
         {
-            "name": ":author_name",
-            "email": ":author_email",
-            "homepage": ":author_website",
+            "name": "Bayu Hendra Winata",
+            "email": "uyab.exe@gmail.com",
+            "homepage": "id-laravel.com",
             "role": "Developer"
         }
     ],
