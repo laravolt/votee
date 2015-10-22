@@ -44,16 +44,16 @@ class Votee
 
     }
 
-    public function voteUp($content, $userId = null)
+    public function voteUp($content, $type, $userId = null)
     {
-        $content = $this->getContentObject($content);
+        $content = $this->getContentObject($content, $type);
 
         return $this->vote(config('votee.values.up'), $content, $userId);
     }
 
-    public function voteDown($content, $userId = null)
+    public function voteDown($content, $type, $userId = null)
     {
-        $content = $this->getContentObject($content);
+        $content = $this->getContentObject($content, $type);
 
         return $this->vote(config('votee.values.down'), $content, $userId);
     }
@@ -200,15 +200,17 @@ class Votee
         }
     }
 
-    protected function getContentObject($content)
+    protected function getContentObject($content, $type = null)
     {
-        if (!$content instanceof Model) {
-            $class = config('votee.content_model');
-
-            return with(new $class)->findOrFail($content);
+        if ($content instanceof Model) {
+            return $content;
         }
 
-        return $content;
+        if ($type) {
+            $class = $type;
+        }
+
+        return with(new $class)->findOrFail($content);
     }
 
 }

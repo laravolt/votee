@@ -13,7 +13,7 @@ class VoteeController extends Controller
     public function up(Request $request)
     {
         try {
-            $vote = Votee::voteUp($request->get('id'));
+            $vote = Votee::voteUp($request->get('id'), $request->get('type'));
             $data['data'] = [
                 'value'      => $vote['value'],
                 'vote_up'   => $vote['vote_up'],
@@ -34,7 +34,7 @@ class VoteeController extends Controller
     public function down(Request $request)
     {
         try {
-            $vote = Votee::voteDown($request->get('id'));
+            $vote = Votee::voteDown($request->get('id'), $request->get('type'));
             $data['data'] = [
                 'value'      => $vote['value'],
                 'vote_up'   => $vote['vote_up'],
