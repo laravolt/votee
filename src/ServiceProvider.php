@@ -68,7 +68,7 @@ class ServiceProvider extends BaseServiceProvider
         $this->loadViewsFrom($this->packagePath('resources/views'), 'votee');
         // allow views to be published to the storage directory
         $this->publishes([
-            $this->packagePath('resources/views') => base_path('resources/views'),
+            $this->packagePath('resources/views') => base_path('resources/views/vendor/votee'),
         ], 'views');
     }
 
