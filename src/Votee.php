@@ -5,7 +5,6 @@ namespace Laravolt\Votee;
 use Laravolt\Votee\Exceptions\UnauthenticatedException;
 use Laravolt\Votee\Models\Vote;
 use Laravolt\Votee\Models\VoteCounter;
-use Illuminate\Database\Eloquent\Model;
 
 class Votee
 {
@@ -17,7 +16,7 @@ class Votee
     const UP_TO_DOWN = 6;
 
     protected $app;
-    protected $userId;
+    protected $user;
     protected $config;
 
     /**
@@ -27,16 +26,15 @@ class Votee
     public function __construct($app)
     {
         $this->app = $app;
-        $this->userId = $app->auth->id();
+        $this->user = $this->app->auth->user();
         $this->config = config('votee');
     }
 
-    public function render($content)
+    public function render($content, $options = [])
     {
-        $content = $this->getContentObject($content);
-        $vote = $this->getExistingVote($content, $this->userId);
+        $vote = $this->getExistingVote($content, $this->user);
 
-        return view("votee::{$this->config['presenter']}.buttons", compact('vote', 'content'))->render();
+        return view("votee::{$this->config['presenter']}.buttons", compact('vote', 'content', 'options'))->render();
     }
 
     public function js()
@@ -44,33 +42,29 @@ class Votee
 
     }
 
-    public function voteUp($content, $type, $userId = null)
+    public function voteUp($content, $user = null)
     {
-        $content = $this->getContentObject($content, $type);
-
-        return $this->vote(config('votee.values.up'), $content, $userId);
+        return $this->vote(config('votee.values.up'), $content, $user);
     }
 
-    public function voteDown($content, $type, $userId = null)
+    public function voteDown($content, $user = null)
     {
-        $content = $this->getContentObject($content, $type);
-
-        return $this->vote(config('votee.values.down'), $content, $userId);
+        return $this->vote(config('votee.values.down'), $content, $user);
     }
 
-    protected function vote($value, $content, $userId = null)
+    protected function vote($value, $content, $user = null)
     {
-        // use ID from logged in user if userId not present
-        if (!$userId) {
-            $userId = $this->userId;
+        // user current auth user if $user not present
+        if (!$user) {
+            $user = $this->user;
         }
 
-        // sorry, we cannot process vote request if userId not present
-        if (!$userId) {
+        // sorry, we cannot process vote request if $user not present
+        if (!$user) {
             throw new UnauthenticatedException;
         }
 
-        $vote = $this->getExistingVote($content, $userId);
+        $vote = $this->getExistingVote($content, $user);
         $direction = $this->getDirection($value, $vote);
 
         switch ($direction) {
@@ -96,7 +90,7 @@ class Votee
 
         if (!$vote) {
             $vote = new Vote();
-            $vote->user_id = $userId;
+            $vote->user_id = $user->id;
             $vote->value = $overridenValue;
             $content->votes()->save($vote);
         } else {
@@ -113,9 +107,9 @@ class Votee
         ];
     }
 
-    protected function getExistingVote($content, $userId)
+    protected function getExistingVote($content, $user)
     {
-        return $content->votes()->where('user_id', '=', $userId)->first();
+        return $content->votes()->where('user_id', '=', $user->getAuthIdentifier())->first();
     }
 
     protected function reloadCounter($content, $direction)
@@ -199,18 +193,4 @@ class Votee
                 break;
         }
     }
-
-    protected function getContentObject($content, $type = null)
-    {
-        if ($content instanceof Model) {
-            return $content;
-        }
-
-        if ($type) {
-            $class = $type;
-        }
-
-        return with(new $class)->findOrFail($content);
-    }
-
 }

@@ -1,4 +1,4 @@
-<div class="ui buttons buttons-votee">
+<div class="ui buttons buttons-votee {{ $options['class'] }}">
     <button id="button-like"
        data-url="{{ route('votee.up') }}"
        data-id="{{ $content['id'] }}"
