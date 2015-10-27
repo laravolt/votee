@@ -109,6 +109,9 @@ class Votee
 
     protected function getExistingVote($content, $user)
     {
+        if (!$this->user) {
+            return false;
+        }
         return $content->votes()->where('user_id', '=', $user->getAuthIdentifier())->first();
     }
 
