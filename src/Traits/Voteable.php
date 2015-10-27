@@ -42,9 +42,17 @@ trait Voteable
         //    return $q->orderBy('up', 'DESC');
         //}]);
 
-        $query->leftJoin('voteable_counter', 'voteable_counter.voteable_id', '=', 'content.id')
-        ->where('voteable_type', '=', (new static)->getMorphClass())
-        ->orderBy('up', 'DESC');
+        $relatedClass = new static;
+        $class = $relatedClass->getMorphClass();
+        $table = $relatedClass->getTable();
+        $primary = $relatedClass->getKeyName();
+
+        $query->selectRaw("$table.*, voteable_id, voteable_type, IFNULL(up, 0), IFNULL(down, 0), IFNULL(up, 0) - IFNULL(down, 0) as total")
+            ->leftJoin('voteable_counter', 'voteable_counter.voteable_id', '=', "$table.$primary")
+              ->where(function ($queryWhere) use ($class) {
+                  return $queryWhere->where('voteable_type', '=', $class)->orWhere('voteable_type', '=', null);
+              })
+              ->orderBy('total', 'DESC')->orderBy('up', 'DESC');
     }
 
     public function getVoteUpAttribute()
