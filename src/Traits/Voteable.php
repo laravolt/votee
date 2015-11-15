@@ -48,7 +48,7 @@ trait Voteable
         $primary = $relatedClass->getKeyName();
 
         $query->selectRaw("$table.*, voteable_id, voteable_type, IFNULL(up, 0), IFNULL(down, 0), IFNULL(up, 0) - IFNULL(down, 0) as total")
-            ->leftJoin('voteable_counter', 'voteable_counter.voteable_id', '=', "$table.$primary")
+              ->leftJoin('voteable_counter', 'voteable_counter.voteable_id', '=', "$table.$primary")
               ->where(function ($queryWhere) use ($class) {
                   return $queryWhere->where('voteable_type', '=', $class)->orWhere('voteable_type', '=', null);
               })
@@ -57,11 +57,19 @@ trait Voteable
 
     public function getVoteUpAttribute()
     {
+        if ($this->attributes['vote_up']) {
+            return $this->attributes['vote_up'];
+        }
+
         return $this->voteCounter ? $this->voteCounter->up : 0;
     }
 
     public function getVoteDownAttribute()
     {
+        if ($this->attributes['vote_down']) {
+            return $this->attributes['vote_down'];
+        }
+
         return $this->voteCounter ? $this->voteCounter->down : 0;
     }
 }

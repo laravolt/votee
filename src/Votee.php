@@ -149,7 +149,7 @@ class Votee
 
         $saved = $content->voteCounter()->save($counter);
         if ($saved && $event) {
-            event('votee.' . $event, [$this->app->auth->user(), $content]);
+            event('votee.' . $event, [$this->app->auth->user(), $content, $counter]);
         }
 
         return $saved;

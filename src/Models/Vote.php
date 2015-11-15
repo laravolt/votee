@@ -10,6 +10,7 @@ class Vote extends Model {
 
     protected $fillable = ['user_id'];
 
+
     public function voteable()
     {
         return $this->morphTo();
