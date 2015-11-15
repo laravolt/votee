@@ -57,7 +57,7 @@ trait Voteable
 
     public function getVoteUpAttribute()
     {
-        if ($this->attributes['vote_up']) {
+        if (isset($this->attributes['vote_up'])) {
             return $this->attributes['vote_up'];
         }
 
@@ -66,7 +66,7 @@ trait Voteable
 
     public function getVoteDownAttribute()
     {
-        if ($this->attributes['vote_down']) {
+        if (isset($this->attributes['vote_down'])) {
             return $this->attributes['vote_down'];
         }
 
